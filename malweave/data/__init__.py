@@ -17,6 +17,8 @@ from .io import (
     decompress_collection,
 )
 from .executable_sections import get_executable_section, get_executable_section_bounds
+from .architecture import get_pe_architecture, is_32bit_x86
+from .obfuscation import run_diec, is_obfuscated, is_obfuscated_file
 
 __all__ = [
     "get_data_from_archives",
@@ -35,4 +37,9 @@ __all__ = [
     "decompress_collection",
     "get_executable_section",
     "get_executable_section_bounds",
+    "get_pe_architecture",
+    "is_32bit_x86",
+    "run_diec",
+    "is_obfuscated",
+    "is_obfuscated_file",
 ]
