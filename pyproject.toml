@@ -9,11 +9,13 @@ description = "Independent research tooling for malware language modeling."
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "MalWeave contributors" }]
-dependencies = []
+dynamic = ["dependencies", "optional-dependencies"]
 
-[project.optional-dependencies]
-dev = ["pytest>=8.0", "ruff>=0.8"]
-docs = ["mkdocs>=1.6"]
+[tool.setuptools.dynamic]
+# dependencies = { file = ["requirements/default.txt"] }
+optional-dependencies.dev = { file = ["requirements/dev.txt"] }
+optional-dependencies.docs = { file = ["requirements/docs.txt"] }
+optional-dependencies.preprocess = { file = ["requirements/preprocess.txt"] }
 
 [tool.setuptools.packages.find]
 include = ["malweave*"]

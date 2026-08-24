@@ -6,11 +6,13 @@ import os
 import sys
 
 import psutil
+import torch
 
 try:
     from pynvml import nvmlInit, nvmlDeviceGetHandleByIndex, nvmlDeviceGetMemoryInfo
-except (ModuleNotFoundError, ImportError) as _err:
-    print(f"{_err.__class__.__name__}: pynvml")
+    _GPU_BACKEND = "nvidia"
+except (ModuleNotFoundError, ImportError):
+    _GPU_BACKEND = "mps" if torch.backends.mps.is_available() else None
 
 
 def process_mem(fmt: str = "G") -> str:
@@ -35,10 +37,16 @@ def mem() -> int:
 
 
 def print_gpu_utilization():
-    nvmlInit()
-    handle = nvmlDeviceGetHandleByIndex(0)
-    info = nvmlDeviceGetMemoryInfo(handle)
-    print(f"GPU memory occupied: {info.used//1024**2} MB.")
+    if _GPU_BACKEND == "nvidia":
+        nvmlInit()
+        handle = nvmlDeviceGetHandleByIndex(0)
+        info = nvmlDeviceGetMemoryInfo(handle)
+        print(f"GPU memory occupied: {info.used // 1024**2} MB.")
+    elif _GPU_BACKEND == "mps":
+        used = torch.mps.driver_allocated_memory()
+        print(f"GPU memory occupied: {used // 1024**2} MB (Apple Silicon MPS).")
+    else:
+        print("GPU memory occupied: unavailable (no NVIDIA or Apple MPS backend detected).")
 
 
 def print_summary(result):
