@@ -8,6 +8,8 @@ The repository was initially documentation-only. Its dataset research pages were
 
 The generated placeholder scripts and intentionally failing sample tests were not retained. Instead, `malweave/` supplies clear package boundaries and a side-effect-free path configuration, while `tests/test_config.py` verifies the base path contract. The project has no model-specific dependency or fabricated training implementation yet.
 
+The project environment is standardized with uv 0.11.9, a committed `uv.lock`, and CPython 3.12.12 as the canonical interpreter. Python 3.10 through 3.12 remains supported and is checked in CI. Dependency groups keep testing, linting, documentation, and future training stacks explicit.
+
 ## Why This Structure
 
 - **Safety and access control:** malware data, provider credentials, and derived artifacts can be sensitive. Data, models, and generated reports are ignored by Git and may be relocated with environment variables.
@@ -21,7 +23,7 @@ The generated placeholder scripts and intentionally failing sample tests were no
 2. Acquire approved data into `data/raw/` or an isolated `MALWEAVE_DATA_DIR`; retain provenance beside the local data rather than committing it.
 3. Add deterministic preparation code to `malweave/data/` and write a targeted test.
 4. Define an experiment under `configs/experiments/`, implement model/training/ evaluation components in their respective modules, and preserve the exact resolved configuration with the output run.
-5. Use `make test`, `make lint`, and `make docs` before sharing work.
+5. Restore dependencies with `uv sync --locked` and use `make check` before sharing work.
 
 ## Deliberate Non-Changes
 

@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=68,<81"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,13 +7,20 @@ name = "malweave"
 version = "0.1.0"
 description = "Independent research tooling for malware language modeling."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.13"
 authors = [{ name = "MalWeave contributors" }]
 dependencies = []
 
-[project.optional-dependencies]
-dev = ["pytest>=8.0", "ruff>=0.8"]
-docs = ["mkdocs>=1.6"]
+[dependency-groups]
+test = ["pytest>=8.0,<9"]
+lint = ["ruff>=0.8,<1"]
+docs = ["mkdocs>=1.6,<2"]
+train = []
+dev = [
+    { include-group = "test" },
+    { include-group = "lint" },
+    { include-group = "docs" },
+]
 
 [tool.setuptools.packages.find]
 include = ["malweave*"]
@@ -32,3 +39,7 @@ force-sort-within-sections = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.uv]
+required-version = "==0.11.9"
+default-groups = ["dev"]

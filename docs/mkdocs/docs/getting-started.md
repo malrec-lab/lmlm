@@ -2,16 +2,16 @@
 
 ## 1. Prepare a local environment
 
-Use Python 3.10 or newer. The baseline test suite uses only the standard library; install the optional extras when linting or building the documentation:
+Install uv 0.11.9, then synchronize the repository from its committed lock:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-make test
-python -m pip install -e ".[dev,docs]"
-make lint
-make docs
+uv sync --locked
+make check
 ```
+
+The canonical environment is CPython 3.12.12, recorded in `.python-version`. The package supports Python 3.10 through 3.12, and CI checks both Python 3.10 and 3.12.12. uv creates `.venv` and installs the exact dependency versions and hashes recorded in `uv.lock`; shell activation is optional because Make targets use `uv run --locked`.
+
+Do not use `pip install` inside the project environment. Add or update dependencies through uv so `pyproject.toml` and `uv.lock` remain synchronized. Read [Environment and dependencies](development/environment.md) for dependency groups, controlled upgrades, CI behavior, and the future GPU policy.
 
 ## 2. Select data safely
 
@@ -27,4 +27,4 @@ Set `MALWEAVE_DATA_DIR` when data must live in an isolated or access-controlled 
 4. Keep model components, training, and evaluation code in their separate package modules.
 5. Save the resolved configuration, dataset release identifier, seed, Git commit, metrics, and artifact paths with every local run.
 
-Run `make test` whenever reusable code changes. Add a focused regression test alongside each new loader, transformation, split policy, or metric.
+Run `make check` whenever reusable code or documentation changes. Add a focused regression test alongside each new loader, transformation, split policy, or metric.
