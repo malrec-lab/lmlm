@@ -8,11 +8,9 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: github-pages
+  group: documentation-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
