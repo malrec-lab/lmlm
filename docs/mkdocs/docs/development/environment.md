@@ -25,7 +25,6 @@ The canonical version is the default for development and experiments. The minimu
 | `Makefile` | Stable project commands that always execute through the locked environment |
 | `.github/workflows/quality.yml` | Tests compatibility on the minimum and canonical Python versions |
 | `.github/workflows/docs.yml` | Builds documentation with the canonical locked environment |
-| `.github/dependabot.yml` | Proposes reviewed monthly uv and GitHub Actions updates |
 
 ## Create or Restore the Environment
 
@@ -98,7 +97,10 @@ uv sync --locked
 make check
 ```
 
-Review and commit both dependency files. A lock diff may include related transitive packages, but unrelated broad upgrades should be avoided. Dependabot creates monthly update pull requests so changes are visible, reviewable, and validated by CI.
+Review and commit both dependency files. A lock diff may include related transitive packages, but
+unrelated broad upgrades should be avoided. Dependency updates are maintainer-initiated and scoped
+to a specific need; scheduled update bots are not enabled. Every update must remain visible,
+reviewable, and validated by CI.
 
 ## CI and Lock Enforcement
 

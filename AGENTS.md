@@ -33,6 +33,8 @@
 - Port RawByteClf behavior one small unit at a time. Add attribution and regression tests; do not
   copy broad utility modules or environment-specific orchestration wholesale.
 - Use `uv` for dependencies and commands. Do not install undeclared packages with `pip`.
+- Do not add scheduled dependency-update bots or repository automation without an explicit
+  maintainer request.
 - Keep imports and path resolution side-effect free. Do not create directories on package import.
 
 ## Required Checks
@@ -45,5 +47,7 @@
 
 - Read `docs/mkdocs/docs/datasets/rands.md` before changing RanDS handling.
 - Read `docs/mkdocs/docs/workflows/lmlm-rands.md` before changing the LMLM-on-RanDS workflow.
+- Read `docs/mkdocs/docs/workflows/lmlm-rands-roadmap.md` before planning or implementing any
+  later LMLM-on-RanDS phase. Update its status only after the corresponding gate passes.
 - Read `docs/mkdocs/docs/development/environment.md` before changing dependencies or supported
   Python/tool versions.

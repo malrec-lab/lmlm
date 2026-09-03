@@ -3,7 +3,10 @@
 This workflow reproduces the data methodology from "Beyond Raw Bytes" on a new ransomware
 corpus. It is not a reproduction of the paper's exact datasets or reported scores.
 
-## Current milestone: inventory the raw release
+Use the [research roadmap](lmlm-rands-roadmap.md) as the canonical phase plan and completion
+checklist. This page documents the implemented inventory workflow.
+
+## Implemented milestone: inventory the raw release
 
 The first milestone is read-only. It validates metadata, paths, release counts, and protocol
 coverage before any PE representation is extracted.
@@ -131,7 +134,8 @@ ransomware families.
 
 ## Next milestone
 
-After this audit passes consistently, create a deterministic 1,000-sample pilot manifest and add
-the first derived representation: bytes concatenated from executable/code PE sections (`EXE`).
-Do not start Ghidra disassembly or decompilation before the EXE pilot reports coverage, failures,
-runtime, output size, and representation-level redundancy.
+First complete Phase 1 in the [research roadmap](lmlm-rands-roadmap.md): reconcile the paper,
+RawByteClf, and RanDS protocol decisions. Only then create the deterministic 1,000-sample pilot
+and executable-section representation. Do not start Ghidra disassembly or decompilation before
+the EXE pilot reports coverage, failures, runtime, output size, and representation-level
+redundancy.

@@ -39,7 +39,9 @@ Commit both `pyproject.toml` and `uv.lock`. Review transitive changes in `uv.loc
 uv lock --upgrade-package <package>
 ```
 
-Dependabot proposes monthly uv and GitHub Actions updates. Treat those pull requests like source changes: review release notes, inspect the lock diff, and require all CI checks to pass.
+Dependency updates are maintainer-initiated rather than scheduled automatically. Make each update
+deliberate and narrowly scoped: review release notes, inspect the lock diff, and require all CI
+checks to pass. Do not add dependency-update bots without explicit maintainer approval.
 
 ## Python and Accelerator Policy
 
