@@ -8,9 +8,9 @@ import sys
 import psutil
 
 try:
-    from pynvml import nvmlInit, nvmlDeviceGetHandleByIndex, nvmlDeviceGetMemoryInfo
-except (ModuleNotFoundError, ImportError) as _err:
-    print(f"{_err.__class__.__name__}: pynvml")
+    from pynvml import nvmlDeviceGetHandleByIndex, nvmlDeviceGetMemoryInfo, nvmlInit
+except (ModuleNotFoundError, ImportError):
+    nvmlInit = nvmlDeviceGetHandleByIndex = nvmlDeviceGetMemoryInfo = None
 
 
 def process_mem(fmt: str = "G") -> str:
@@ -35,6 +35,8 @@ def mem() -> int:
 
 
 def print_gpu_utilization():
+    if nvmlInit is None:
+        raise RuntimeError("GPU monitoring requires the optional pynvml package.")
     nvmlInit()
     handle = nvmlDeviceGetHandleByIndex(0)
     info = nvmlDeviceGetMemoryInfo(handle)
