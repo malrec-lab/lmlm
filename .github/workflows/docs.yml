@@ -24,15 +24,19 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: astral-sh/setup-uv@v6
         with:
-          python-version: "3.12"
+          version: "0.11.9"
+          enable-cache: true
 
-      - name: Install documentation dependencies
-        run: python -m pip install -e ".[docs]"
+      - name: Install Python
+        run: uv python install 3.12.12
+
+      - name: Sync locked documentation environment
+        run: uv sync --locked --python 3.12.12 --no-default-groups --group docs
 
       - name: Build documentation
-        run: python -m mkdocs build --strict --config-file docs/mkdocs/mkdocs.yml
+        run: uv run --no-sync python -m mkdocs build --strict --config-file docs/mkdocs/mkdocs.yml
 
       - name: Upload Pages artifact
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

@@ -38,6 +38,25 @@ The official pages do not present a source-code repository for RanDS itself, so 
 
 The site distributes individual raw samples as password-protected ZIP archives. Its documented archive password is `infected`. That password is a handling convention, not a safety control: a downloaded raw sample remains live malware. Do not automate bulk raw-sample collection from the browser interface without explicit authorization and an approved collection protocol.
 
+## Audited Raw PE Snapshot
+
+MalWeave's `2026-09-02` local snapshot is a bulk raw-PE release with two metadata CSV files and
+215,404 extensionless PE files sharded across all 256 SHA-256 prefixes. The CSV metadata is a
+superset of the available binaries:
+
+| Class | Metadata rows | Available PE files | Metadata without a file |
+| --- | ---: | ---: | ---: |
+| Benign | 127,141 | 110,788 | 16,353 |
+| Ransomware | 110,546 | 104,616 | 5,930 |
+
+The released `Ransomware.csv` header lists `Family, Packed, Entropy`, but the row values use
+`Packed, Entropy, Family`. Use MalWeave's loader, which detects and normalizes this release-level
+schema mismatch. Do not trust the header through an unvalidated `csv.DictReader`.
+
+Run the read-only audit described in [LMLM on RanDS](../workflows/lmlm-rands.md) before using the
+snapshot. The committed dataset config records aggregate release expectations only; local paths,
+sample hashes, and manifests remain outside version control.
+
 ## Processed Dataset Releases
 
 The [processed-datasets page](https://ran-ds.com/features) currently offers five feature representations. Download only the representation required for the experiment; every release may be a password-protected ZIP archive using the password above. The site states that these archives contain no executables.

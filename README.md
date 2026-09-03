@@ -12,27 +12,46 @@ The implementation is intended as an independent research codebase, not as the o
 
 ## Start Here
 
-The repository currently provides the research foundation; it does not include a trained model or any dataset. Use Python 3.10 or later, then run the structural checks:
+The repository currently provides the research foundation; it does not distribute a trained model or dataset. The canonical development environment uses **CPython 3.12.12** and **uv 0.11.9**. After installing that uv version, create the exact locked environment and run every check with:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-make test
+uv sync --locked
+make check
 ```
 
-Install optional tooling only when needed:
+The package supports Python 3.10 through 3.12. CI tests Python 3.10 on Ubuntu and the canonical
+Python 3.12.12 environment on Ubuntu, macOS, and Windows. `uv` reads `.python-version`, creates
+`.venv`, and installs the exact versions in `uv.lock`, so manual activation is optional. See the
+[environment and dependency guide](docs/mkdocs/docs/development/environment.md) before changing
+dependencies and [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes.
+
+Individual checks remain available:
 
 ```bash
-python -m pip install -e ".[dev,docs]"
+make test
 make lint
+make format-check
 make docs
 ```
 
 Serve the research documentation locally with:
 
 ```bash
-python -m mkdocs serve --config-file docs/mkdocs/mkdocs.yml
+uv run --locked python -m mkdocs serve --config-file docs/mkdocs/mkdocs.yml
 ```
+
+Audit the documented RanDS raw-PE snapshot without modifying it:
+
+```bash
+cp .env.example .env
+# Edit .env and set MALWEAVE_RANDS_DIR to the extracted corpus path.
+uv run --locked malweave data inspect --dataset rands
+```
+
+The [LMLM on RanDS workflow](docs/mkdocs/docs/workflows/lmlm-rands.md) explains the release
+contract, configuration precedence, optional integrity checks, and why preprocessing begins with
+a bounded EXE pilot. The CLI loads the ignored root `.env` without overriding variables already
+set by the calling shell or CI environment.
 
 ## Project Map
 
@@ -68,4 +87,5 @@ No raw samples, credentials, proprietary data, extracted malware features, or mo
 - Name notebooks as `<order>-<initials>-<topic>.ipynb`, for example `01-nv-dataset-audit.ipynb`. Promote durable notebook logic into `malweave/`.
 - Give every experiment a committed configuration in `configs/experiments/` and keep an immutable copy beside its outputs.
 - Split data before fitting tokenizers, normalizers, feature selectors, or other learned transforms. Preserve dataset-specific temporal and family/provenance constraints recorded in the catalog.
-- Add tests for reusable loaders, transformations, splitters, and evaluation code; use `make test` before sharing changes.
+- Add dependencies through `uv add` in the narrowest appropriate group and commit `pyproject.toml` with the resulting `uv.lock` change.
+- Add tests for reusable loaders, transformations, splitters, and evaluation code; use `make check` before sharing changes.

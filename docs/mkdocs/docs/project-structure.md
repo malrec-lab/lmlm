@@ -45,4 +45,6 @@ Every reported result should be recoverable from five pieces of information:
 4. Split protocol, preprocessing fit scope, random seed, and evaluation metrics.
 5. Checkpoint and prediction locations, retained in approved local storage.
 
+The base Python toolchain is reconstructed with uv 0.11.9, `.python-version`, and the committed `uv.lock`. Future training dependencies belong in the `train` or a narrowly scoped model/dataset group; GPU drivers and native runtimes require an additional documented compatibility matrix or canonical container. See [Environment and dependencies](development/environment.md).
+
 Do not place restricted malware samples or material that reveals them in a configuration, notebook output, test fixture, documentation build, or Git history. See the dataset catalog for corpus-specific constraints.
