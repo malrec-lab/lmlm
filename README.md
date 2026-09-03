@@ -53,6 +53,10 @@ contract, configuration precedence, optional integrity checks, and why preproces
 a bounded EXE pilot. The CLI loads the ignored root `.env` without overriding variables already
 set by the calling shell or CI environment.
 
+Review the [LMLM on RanDS research roadmap](docs/mkdocs/docs/workflows/lmlm-rands-roadmap.md)
+before starting a later phase. It is the canonical record of phase status, decisions, deliverables,
+and completion gates for maintainers and AI assistants.
+
 ## Project Map
 
 ```text

@@ -47,5 +47,7 @@
 
 - Read `docs/mkdocs/docs/datasets/rands.md` before changing RanDS handling.
 - Read `docs/mkdocs/docs/workflows/lmlm-rands.md` before changing the LMLM-on-RanDS workflow.
+- Read `docs/mkdocs/docs/workflows/lmlm-rands-roadmap.md` before planning or implementing any
+  later LMLM-on-RanDS phase. Update its status only after the corresponding gate passes.
 - Read `docs/mkdocs/docs/development/environment.md` before changing dependencies or supported
   Python/tool versions.
