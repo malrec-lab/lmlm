@@ -19,7 +19,11 @@ uv sync --locked
 make check
 ```
 
-The package supports Python 3.10 through 3.12; CI tests Python 3.10 and the canonical 3.12.12 environment. `uv` reads `.python-version`, creates `.venv`, and installs the exact versions in `uv.lock`, so manual activation is optional. See the [environment and dependency guide](docs/mkdocs/docs/development/environment.md) before changing dependencies and [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes.
+The package supports Python 3.10 through 3.12. CI tests Python 3.10 on Ubuntu and the canonical
+Python 3.12.12 environment on Ubuntu, macOS, and Windows. `uv` reads `.python-version`, creates
+`.venv`, and installs the exact versions in `uv.lock`, so manual activation is optional. See the
+[environment and dependency guide](docs/mkdocs/docs/development/environment.md) before changing
+dependencies and [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes.
 
 Individual checks remain available:
 
@@ -35,6 +39,19 @@ Serve the research documentation locally with:
 ```bash
 uv run --locked python -m mkdocs serve --config-file docs/mkdocs/mkdocs.yml
 ```
+
+Audit the documented RanDS raw-PE snapshot without modifying it:
+
+```bash
+cp .env.example .env
+# Edit .env and set MALWEAVE_RANDS_DIR to the extracted corpus path.
+uv run --locked malweave data inspect --dataset rands
+```
+
+The [LMLM on RanDS workflow](docs/mkdocs/docs/workflows/lmlm-rands.md) explains the release
+contract, configuration precedence, optional integrity checks, and why preprocessing begins with
+a bounded EXE pilot. The CLI loads the ignored root `.env` without overriding variables already
+set by the calling shell or CI environment.
 
 ## Project Map
 

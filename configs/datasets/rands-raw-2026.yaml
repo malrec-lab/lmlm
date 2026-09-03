@@ -1,0 +1,22 @@
+dataset:
+  name: rands
+  snapshot: "2026-09-02"
+  root_env: MALWEAVE_RANDS_DIR
+
+layout:
+  benign_csv: Benign.csv
+  ransomware_csv: Ransomware.csv
+  samples_dir: dataset
+
+expected:
+  shards: 256
+  files: 215404
+  labels:
+    benign: 110788
+    ransomware: 104616
+
+protocols:
+  full: {}
+  lmlm_x86_unpacked:
+    arch: I386
+    packed: false

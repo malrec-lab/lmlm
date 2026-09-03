@@ -9,7 +9,13 @@ description = "Independent research tooling for malware language modeling."
 readme = "README.md"
 requires-python = ">=3.10,<3.13"
 authors = [{ name = "MalWeave contributors" }]
-dependencies = []
+dependencies = [
+    "python-dotenv>=1,<2",
+    "pyyaml>=6,<7",
+]
+
+[project.scripts]
+malweave = "malweave.cli:main"
 
 [dependency-groups]
 test = ["pytest>=8.0,<9"]

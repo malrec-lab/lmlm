@@ -6,6 +6,8 @@ theme:
 nav:
   - Home: index.md
   - Getting started: getting-started.md
+  - Workflows:
+      - LMLM on RanDS: workflows/lmlm-rands.md
   - Development:
       - Environment and dependencies: development/environment.md
   - Project structure: project-structure.md

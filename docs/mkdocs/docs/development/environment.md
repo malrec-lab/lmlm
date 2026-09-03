@@ -9,7 +9,8 @@ MalWeave uses uv to make the Python environment repeatable across developer mach
 | uv | Exactly 0.11.9, enforced by `tool.uv.required-version` |
 | Canonical Python | CPython 3.12.12, recorded in `.python-version` |
 | Supported Python | 3.10 through 3.12, declared in `project.requires-python` |
-| CI compatibility | Python 3.10 and CPython 3.12.12 |
+| CI operating systems | Ubuntu, macOS, and Windows GitHub-hosted runners |
+| CI compatibility | Python 3.10 on Ubuntu; CPython 3.12.12 on all three operating systems |
 | Accelerator runtime | CPU-only foundation; CUDA/framework matrix will be defined with the first GPU stack |
 
 The canonical version is the default for development and experiments. The minimum-version CI job catches accidental use of newer Python syntax or APIs.
@@ -43,6 +44,27 @@ Run commands without activating the environment:
 uv run --locked python --version
 uv run --locked pytest
 ```
+
+`make check` is the concise Unix/macOS entrypoint. Windows developers without `make` can run the
+same non-mutating checks used by CI:
+
+```powershell
+uv lock --check
+uv run --locked ruff check malweave tests
+uv run --locked ruff format --check malweave tests
+uv run --locked pytest -v
+uv run --locked python -m mkdocs build --strict --config-file docs/mkdocs/mkdocs.yml
+```
+
+## Machine-Local Configuration
+
+Copy `.env.example` to `.env` for paths that differ between machines. The MalWeave CLI loads the
+root `.env` when a command starts, but does not override variables already supplied by the shell or
+CI. Explicit CLI arguments such as `--root` have the highest precedence.
+
+`.env` and other `.env.*` files are ignored because they may contain machine paths or credentials;
+only the placeholder-only `.env.example` is versioned. Loading happens at CLI execution time, not
+when the `malweave` package is imported, so library imports remain side-effect free.
 
 ## Dependency Groups
 
