@@ -38,13 +38,7 @@ Never commit `.env`; only `.env.example` is versioned.
 See [LMLM on RanDS](workflows/lmlm-rands.md) for the release contract, bounded hash
 verification, local manifest creation, and the staged reproduction plan.
 
-## 3. Start an experiment
+## 3. Implement a research task
 
-1. Add a reviewed, non-sensitive dataset description in `configs/datasets/`, or use the committed
-   RanDS snapshot config when working with that release.
-2. Add an experiment configuration in `configs/experiments/` before running it.
-3. Implement reusable loaders and transforms in `malweave/data/`; leave exploratory analysis in a numbered notebook.
-4. Keep model components, training, and evaluation code in their separate package modules.
-5. Save the resolved configuration, dataset release identifier, seed, Git commit, metrics, and artifact paths with every local run.
-
-Run `make check` whenever reusable code or documentation changes. Add a focused regression test alongside each new loader, transformation, split policy, or metric.
+After setup, use [Onboarding a Research Task](onboarding.md). It is the single guide for reading
+order, phase gates, code placement, focused tests, documentation updates, and review before commit.
