@@ -132,10 +132,9 @@ Keep these protocols separate. The full corpus has strong class correlations wit
 and packing status; the filtered protocol changes class balance and removes many low-support
 ransomware families.
 
-## Next milestone
+## Protocol review
 
-First complete Phase 1 in the [research roadmap](lmlm-rands-roadmap.md): reconcile the paper,
-RawByteClf, and RanDS protocol decisions. Only then create the deterministic 1,000-sample pilot
-and executable-section representation. Do not start Ghidra disassembly or decompilation before
-the EXE pilot reports coverage, failures, runtime, output size, and representation-level
-redundancy.
+Phase 1 decisions are recorded in the short [LMLM on RanDS protocol](lmlm-rands-protocol.md) and
+its experiment config. After review and merge, the next milestone is the deterministic 1,000-sample
+pilot. Do not start executable-section extraction, Ghidra disassembly, or decompilation until their
+roadmap gates permit it.

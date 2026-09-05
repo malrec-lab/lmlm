@@ -33,8 +33,8 @@ Rules for maintainers and AI assistants:
 | Phase | Status | Outcome |
 | --- | --- | --- |
 | 0. Repository and RanDS inventory foundation | `COMPLETED` | Read-only corpus contract, CLI, tests, docs, `.env`, and cross-platform CI |
-| 0.5. Repository hygiene | `IN REVIEW` | Remove unsolicited dependency automation and isolate documentation concurrency |
-| 1. Reproduction protocol | `NEXT` | Reconcile paper, RawByteClf, and RanDS decisions before preprocessing |
+| 0.5. Repository hygiene | `COMPLETED` | Removed unsolicited dependency automation and isolated documentation concurrency |
+| 1. Reproduction protocol | `IN REVIEW` | Concise paper, RawByteClf, and RanDS protocol for the bounded EXE pilot |
 | 2. Deterministic pilot manifest | `NOT STARTED` | Select and fully verify a bounded 1,000-sample cohort |
 | 3. PE validation and EXE extraction | `NOT STARTED` | Produce deterministic executable-section bytes with failure accounting |
 | 4. RAW versus EXE data products | `NOT STARTED` | Freeze representation rules and quantify truncation and redundancy |
@@ -74,9 +74,9 @@ Rules for maintainers and AI assistants:
 ### Gate
 
 - [x] Source changes implemented and locally validated.
-- [ ] Hygiene pull request merged into `main`.
-- [ ] Quality and Documentation workflows pass on the merged commit.
-- [ ] Unrequested dependency-update pull requests are closed.
+- [x] Hygiene pull request merged into `main`.
+- [x] Quality and Documentation workflows pass on the merged commit.
+- [x] Unrequested dependency-update pull requests are closed.
 
 Phase 1 must not modify preprocessing code until this gate is complete.
 
@@ -103,20 +103,20 @@ Conflicts among these sources must be documented rather than silently resolved.
 - A list of unresolved decisions; no placeholder may silently become a default.
 - Focused tests for any reusable protocol validation added in this phase.
 
-### Open decisions
+### Phase 1 conclusions
 
-- Whether the adapted cohort includes EXE only or both EXE and DLL.
-- The exact interpretation of `I386` and unpacked filtering.
-- The faithful split policy and the additional family- or time-aware evaluation policy.
-- Representation length, truncation direction, padding value, and empty-input behavior.
-- Primary metrics and the number of seeds required for reported experiments.
+- EXE and DLL are both included, following the paper's collection scope.
+- `Arch=I386` and `Packed=0` are explicit RanDS adaptations, not claims of tool-equivalent filtering.
+- Representation deduplication must happen before a scientific split; exact split policy and model
+  choices wait for the pilot evidence.
+- EXE starts before DIS and DEC; RAW remains a later comparison representation.
 
 ### Gate
 
-- [ ] Every open decision is resolved or explicitly deferred with a reason.
-- [ ] Every divergence from the paper is labelled and reviewable.
-- [ ] A second reader can derive the same cohort rules from config and documentation alone.
-- [ ] `make check` passes.
+- [x] Every open decision is resolved or explicitly deferred with a reason.
+- [x] Every divergence from the paper is labelled and reviewable.
+- [x] A second reader can derive the same cohort rules from config and documentation alone.
+- [x] `make check` passes.
 
 ## Phase 2: Deterministic 1,000-sample pilot
 
@@ -255,4 +255,5 @@ Current evidence:
 
 ```text
 2026-09-03 | Phase 0 | c596b77 | rands-raw-2026.yaml | real-corpus contract + make check | RanDS methodology adaptation
+2026-09-04 | Phase 0.5 | 80af695 | repository workflows | main Quality + Documentation passed | dependency updates remain manual
 ```

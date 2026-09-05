@@ -8,6 +8,7 @@ nav:
   - Getting started: getting-started.md
   - Workflows:
       - LMLM on RanDS: workflows/lmlm-rands.md
+      - LMLM on RanDS protocol: workflows/lmlm-rands-protocol.md
       - LMLM on RanDS roadmap: workflows/lmlm-rands-roadmap.md
   - Development:
       - Environment and dependencies: development/environment.md
