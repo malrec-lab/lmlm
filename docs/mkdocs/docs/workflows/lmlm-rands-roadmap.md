@@ -14,7 +14,7 @@ Statuses have the following meanings:
 | Status | Meaning |
 | --- | --- |
 | `COMPLETED` | The phase gate passed and evidence is recorded. |
-| `IN REVIEW` | Implementation exists but is not yet merged and verified on `main`. |
+| `IN REVIEW` | Implementation exists but maintainer review and its final evidence record are incomplete. |
 | `NEXT` | The only phase approved to begin after the current review completes. |
 | `NOT STARTED` | Work must not begin until earlier gates pass. |
 | `BLOCKED` | Progress requires a recorded maintainer decision or external prerequisite. |
@@ -34,8 +34,8 @@ Rules for maintainers and AI assistants:
 | --- | --- | --- |
 | 0. Repository and RanDS inventory foundation | `COMPLETED` | Read-only corpus contract, CLI, tests, docs, `.env`, and cross-platform CI |
 | 0.5. Repository hygiene | `COMPLETED` | Removed unsolicited dependency automation and isolated documentation concurrency |
-| 1. Reproduction protocol | `IN REVIEW` | Concise paper, RawByteClf, and RanDS protocol for the bounded EXE pilot |
-| 2. Deterministic pilot manifest | `NOT STARTED` | Select and fully verify a bounded 1,000-sample cohort |
+| 1. Reproduction protocol | `COMPLETED` | Concise paper, RawByteClf, and RanDS protocol for the bounded EXE pilot |
+| 2. Deterministic pilot manifest | `IN REVIEW` | Select and fully verify a bounded 1,000-sample cohort |
 | 3. PE validation and EXE extraction | `NOT STARTED` | Produce deterministic executable-section bytes with failure accounting |
 | 4. RAW versus EXE data products | `NOT STARTED` | Freeze representation rules and quantify truncation and redundancy |
 | 5. Pilot baselines and RawByteClf port | `NOT STARTED` | Validate training and evaluation without leakage |
@@ -125,13 +125,29 @@ Conflicts among these sources must be documented rather than silently resolved.
 Create a bounded cohort that validates the complete data path without paying full-corpus cost.
 This pilot is engineering evidence, not the final evaluation dataset.
 
-### Proposed local outputs
+### Optional local provenance output from Phase 0
 
 ```text
 data/interim/rands/2026-09-02/inventory.csv
+```
+
+Generate this optional full-release diagnostic/provenance artifact with `data inspect --manifest`.
+It records metadata, availability, relative paths, and canonical source SHA-256 values; content-hash
+verification remains an explicit `data inspect --verify-hashes` choice. It is not a prerequisite or
+input to Phase 2.
+
+### Required Phase 2 outputs
+
+```text
 data/interim/rands/2026-09-02/pilot-1000.csv
 reports/rands/2026-09-02/pilot-1000.json
 ```
+
+The Phase 2 `data pilot` command reads the RanDS metadata CSV directly, audits the local
+filesystem, deterministically selects the 1,000-sample cohort, verifies source SHA-256 values, and
+writes the pilot manifest and summary. `inventory.csv` and `pilot-1000.csv` have different
+purposes: the inventory describes the available corpus; the pilot manifest records the selected
+experimental cohort.
 
 ### Deliverables
 
@@ -146,7 +162,8 @@ reports/rands/2026-09-02/pilot-1000.json
 
 - [ ] Exactly 1,000 unique available samples satisfy the approved protocol.
 - [ ] All 1,000 source hashes match their canonical SHA-256 identifiers.
-- [ ] No source or equivalent group crosses a pilot split.
+- [ ] Every selected source identity is unique. This phase creates no scientific split; derived
+  representation-equivalence groups are deferred until representations exist.
 - [ ] Regeneration produces a byte-identical manifest on supported platforms.
 - [ ] Class and family distributions plus all exclusions are reported.
 
@@ -256,4 +273,5 @@ Current evidence:
 ```text
 2026-09-03 | Phase 0 | c596b77 | rands-raw-2026.yaml | real-corpus contract + make check | RanDS methodology adaptation
 2026-09-04 | Phase 0.5 | 80af695 | repository workflows | main Quality + Documentation passed | dependency updates remain manual
+2026-09-05 | Phase 1 | be8d348 | lmlm-rands-pilot.yaml | make check | RanDS cohort and representation adaptation
 ```

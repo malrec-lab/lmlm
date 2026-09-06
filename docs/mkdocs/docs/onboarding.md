@@ -6,15 +6,16 @@ independent.
 
 ## Know the current boundary
 
-MalWeave currently implements one RanDS operation:
+MalWeave currently implements two RanDS operations:
 
 ```text
 local RanDS release -> metadata and filesystem audit -> aggregate JSON or local manifest
+local RanDS release -> deterministic pilot selection -> source-hash-verified local manifest
 ```
 
-It does not yet extract PE sections, train tokenizers, train a model, or run Ghidra. Those are
-planned phases, not hidden features. [LMLM on RanDS](workflows/lmlm-rands.md) is the source of
-truth for the implemented audit command and its outputs.
+Neither operation parses or executes a PE. It does not yet extract PE sections, train tokenizers,
+train a model, or run Ghidra. Those are planned phases, not hidden features. [LMLM on
+RanDS](workflows/lmlm-rands.md) is the source of truth for the implemented commands and outputs.
 
 ## Read in this order
 
@@ -29,8 +30,9 @@ truth for the implemented audit command and its outputs.
 | [LMLM on RanDS roadmap](workflows/lmlm-rands-roadmap.md) | Confirm which phase is allowed to start. |
 | The focused test, then its implementation | Learn the expected behavior before reading the code. |
 
-For the current implementation, read `tests/data/test_rands.py` before
-`malweave/data/rands.py`. The test uses synthetic bytes and shows the contract without exposing a
+For the current implementation, read `tests/data/test_rands_pilot.py` before
+`malweave/data/rands_pilot.py`, then read `tests/data/test_rands.py` before
+`malweave/data/rands.py`. The tests use synthetic bytes and show the contracts without exposing a
 real sample.
 
 ## Implement a new task
@@ -66,13 +68,15 @@ Follow this sequence for every durable task:
 | Checkpoints and predictions | `models/` | No |
 | Run-specific reports and figures | `reports/` | No |
 
-## Worked example: the next RanDS task
+## Worked example: the active RanDS task
 
-Phase 2 creates a deterministic, local 1,000-sample pilot manifest. The exact cohort rules and
-phase boundary live in the [protocol](workflows/lmlm-rands-protocol.md) and
-[roadmap](workflows/lmlm-rands-roadmap.md); do not copy them into new code.
+Phase 2 creates a deterministic, local 1,000-sample pilot manifest. The exact cohort rules,
+selection seed, family-allocation policy, and phase boundary live in the
+[protocol](workflows/lmlm-rands-protocol.md) and [roadmap](workflows/lmlm-rands-roadmap.md); do
+not create a second source of truth in code comments or shell scripts.
 
 The implementation begins with a synthetic manifest-selection test in `tests/data/`, then a small
 function in `malweave/data/`. Reuse the normalized metadata reader in `malweave/data/rands.py`
 instead of duplicating CSV parsing. Phase 2 must not parse PEs, extract EXE bytes, run Ghidra, fit a
-tokenizer, train a model, or create a scientific split.
+tokenizer, train a model, or create a scientific split. Phase 3 remains blocked until the Phase 2
+gate has maintainer-reviewed local evidence.

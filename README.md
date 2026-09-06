@@ -8,8 +8,8 @@ corpus; it is not the paper's official implementation.
 
 ## Current State
 
-The only implemented RanDS operation is a read-only release audit. It validates local metadata,
-filesystem layout, aggregate counts, and optional bounded content hashes. PE extraction,
+RanDS currently supports a read-only release audit and a deterministic, fully source-hash-verified
+local pilot-manifest build. Neither command parses or executes PE files. PE extraction,
 tokenization, model training, and Ghidra analysis are planned phases, not available commands.
 
 ```bash

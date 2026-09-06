@@ -25,6 +25,8 @@ not specify them. A conflict stays documented; source code does not silently ove
 | Labels | Benign `0`, ransomware `1` | RanDS is a ransomware corpus, so this is an adaptation. |
 | Input files | EXE and DLL, `Arch=I386`, `Packed=0`, file must exist | Closest available RanDS proxy for the paper's PE, x86, and unpacked filters. |
 | Pilot size | 500 benign + 500 ransomware | Small, balanced engineering cohort; not a prevalence estimate or scientific split. |
+| Pilot ranking | SHA-256 of `lmlm-rands-pilot-v1:sample:<source SHA-256>` | Stable across input ordering and supported operating systems. |
+| Ransomware allocation | Proportional largest remainder across eligible families | Preserves the aggregate family mix without forcing every low-support family into 500 slots. |
 | First representation | EXE | Fastest code-only representation; DIS and DEC wait for their own cost/failure gates. |
 | EXE bytes | Concatenate executable-or-code sections in section-table order | Matches the paper and RawByteClf behavior. |
 | Identity | SHA-256 for source and exact representation bytes | Enables source verification and representation-level leakage prevention. |
@@ -37,11 +39,11 @@ Linux `file` and Detect-It-Easy filtering process from the paper.
 ## What happens next
 
 Phase 2 creates a deterministic 1,000-sample local manifest, verifies every selected source hash,
-and reports exclusions by class and ransomware family. It must not start PE parsing yet.
+and reports exclusions by class and ransomware family. A family with no allocated slot is reported;
+a family whose target equals its eligible count is also reported. It must not start PE parsing yet.
 
 Phase 3 compares a small parser adapter with the RawByteClf EXE rules using synthetic PE fixtures,
 then extracts EXE bytes with structured failures and representation SHA-256 digests.
 
-The following remain intentionally open until evidence exists: the pilot family-allocation policy,
-LIEF versus pefile, scientific split proportions, padding/model choice, and all Ghidra toolchains.
-They are not hidden defaults.
+The following remain intentionally open until evidence exists: LIEF versus pefile, scientific split
+proportions, padding/model choice, and all Ghidra toolchains. They are not hidden defaults.

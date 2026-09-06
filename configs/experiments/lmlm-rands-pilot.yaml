@@ -1,7 +1,7 @@
-# Phase 1 research note. This is not an executable training configuration yet.
+# Phase 2 pilot-manifest contract. This is not an executable training configuration yet.
 protocol:
   name: lmlm-rands-pilot
-  phase: 1
+  phase: 2
   state: in_review
 
 references:
@@ -32,7 +32,13 @@ pilot:
   purpose: Validate the data path only; do not report model performance as a scientific result.
   target_samples: 1000
   target_labels: {benign: 500, ransomware: 500}
-  selection: Deterministic SHA-256-derived ranking after cohort filters.
+  selection:
+    method: sha256_rank
+    seed: lmlm-rands-pilot-v1
+    ransomware_family_allocation:
+      method: proportional_largest_remainder
+      tie_breaker: SHA-256 of the selection seed and family name
+      low_support: Do not force every family into the pilot; report zero or all-selected families.
   source_verification: Hash every selected source PE and compare it with its canonical SHA-256.
 
 representations:
@@ -59,7 +65,6 @@ later_training_contract:
   lengths: [4096, 8192, 16384, 32768, 65536]
   primary_detection_metrics: [roc_auc, accuracy]
   deferred:
-    - pilot ransomware-family allocation
     - EXE parser choice after synthetic compatibility tests
     - scientific split proportions after representation groups and year distributions exist
     - padding and first trainable model after representation-size measurements
