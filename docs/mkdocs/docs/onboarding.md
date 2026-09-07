@@ -6,16 +6,18 @@ independent.
 
 ## Know the current boundary
 
-MalWeave currently implements two RanDS operations:
+MalWeave currently implements three RanDS operations:
 
 ```text
 local RanDS release -> metadata and filesystem audit -> aggregate JSON or local manifest
 local RanDS release -> deterministic pilot selection -> source-hash-verified local manifest
+verified pilot manifest -> static EXE-section extraction -> local representations and report
 ```
 
-Neither operation parses or executes a PE. It does not yet extract PE sections, train tokenizers,
-train a model, or run Ghidra. Those are planned phases, not hidden features. [LMLM on
-RanDS](workflows/lmlm-rands.md) is the source of truth for the implemented commands and outputs.
+No operation executes a PE. The EXE command statically parses and extracts sections, but the project
+does not yet train tokenizers or models, or run Ghidra. Those are planned phases, not hidden
+features. [LMLM on RanDS](workflows/lmlm-rands.md) is the source of truth for the implemented
+commands and outputs.
 
 ## Read in this order
 
@@ -30,10 +32,10 @@ RanDS](workflows/lmlm-rands.md) is the source of truth for the implemented comma
 | [LMLM on RanDS roadmap](workflows/lmlm-rands-roadmap.md) | Confirm which phase is allowed to start. |
 | The focused test, then its implementation | Learn the expected behavior before reading the code. |
 
-For the current implementation, read `tests/data/test_rands_pilot.py` before
-`malweave/data/rands_pilot.py`, then read `tests/data/test_rands.py` before
-`malweave/data/rands.py`. The tests use synthetic bytes and show the contracts without exposing a
-real sample.
+For the current implementation, read `tests/data/test_pe_sections.py` before
+`malweave/data/pe_sections.py`, then `tests/data/test_rands_exe.py` before
+`malweave/data/rands_exe.py`. Read the pilot and audit tests afterward. The tests use synthetic
+bytes and show the contracts without exposing a real sample.
 
 ## Implement a new task
 

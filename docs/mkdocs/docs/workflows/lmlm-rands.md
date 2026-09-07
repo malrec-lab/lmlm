@@ -169,6 +169,39 @@ Given an unchanged snapshot and config, the manifest is byte-identical across su
 This pilot is engineering evidence only: it is not a scientific train/validation/test split, and it
 does not yet establish representation-equivalence groups.
 
+## 7. Extract static EXE bytes from the pilot
+
+Only after the Phase 2 manifest exists, invoke the bounded EXE extraction with explicit ignored
+output locations:
+
+```bash
+uv run --locked malweave data extract-exe \
+  --dataset rands \
+  --pilot-manifest data/interim/rands/2026-09-02/pilot-1000.csv \
+  --representation-dir data/processed/rands/2026-09-02/exe \
+  --manifest data/processed/rands/2026-09-02/exe-manifest.csv \
+  --summary reports/rands/2026-09-02/exe-extraction.json
+```
+
+The command accepts only a pilot manifest whose rows were source-hash-verified and whose paths use
+the canonical SHA-256 shard layout. It re-hashes each source before parsing, so a later changed or
+missing source becomes `source_hash_mismatch` or `read_error`, not an unreported replacement.
+
+LIEF `0.15.1`, RawByteClf's default toolkit, statically parses the source. A section is selected
+when it has `IMAGE_SCN_MEM_EXECUTE` or `IMAGE_SCN_CNT_CODE`; selected raw ranges remain in
+section-table order. To match RawByteClf, a range that extends beyond EOF or into the next non-empty
+section is clipped and recorded as a warning. Header and parser failures, no executable section, and
+empty executable output remain individual machine-readable statuses in `exe-manifest.csv`.
+
+Successful EXE bytes are stored as `<source SHA-256>.bin` under the representation directory. The
+manifest links each result to its source, representation SHA-256, section counts, size, runtime, and
+status. A repeat run reuses an existing representation only when its SHA-256 matches newly extracted
+bytes; a conflicting existing file stops rather than overwriting it. The JSON summary reports only
+aggregate coverage, class-specific statuses, warnings, storage, and duplicate-representation counts.
+
+This command does not deduplicate representations, create a scientific split, tokenize, train a
+model, or run Ghidra. Those remain later gates.
+
 ## Protocol review
 
 Phase 1 decisions are recorded in the short [LMLM on RanDS protocol](lmlm-rands-protocol.md) and

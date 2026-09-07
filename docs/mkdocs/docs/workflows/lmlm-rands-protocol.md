@@ -1,7 +1,8 @@
 # LMLM on RanDS Protocol
 
 This is the short research contract for the first RanDS pilot. Its companion config is
-`configs/experiments/lmlm-rands-pilot.yaml`. It records decisions before any PE content is parsed.
+`configs/experiments/lmlm-rands-pilot.yaml`. It records the frozen cohort and first
+representation decisions for the bounded pilot.
 
 MalWeave adapts the LMLM methodology to RanDS. It does not reproduce the original paper dataset or
 claim the paper's reported scores. The task is ransomware-versus-benign classification, not general
@@ -28,7 +29,8 @@ not specify them. A conflict stays documented; source code does not silently ove
 | Pilot ranking | SHA-256 of `lmlm-rands-pilot-v1:sample:<source SHA-256>` | Stable across input ordering and supported operating systems. |
 | Ransomware allocation | Proportional largest remainder across eligible families | Preserves the aggregate family mix without forcing every low-support family into 500 slots. |
 | First representation | EXE | Fastest code-only representation; DIS and DEC wait for their own cost/failure gates. |
-| EXE bytes | Concatenate executable-or-code sections in section-table order | Matches the paper and RawByteClf behavior. |
+| EXE bytes | Concatenate executable-or-code raw ranges in section-table order, clipping at EOF or the next non-empty section | Matches RawByteClf's default LIEF behavior and records malformed ranges. |
+| EXE parser | LIEF `0.15.1` | RawByteClf's default toolkit; it is pinned for cross-platform regression tests. |
 | Identity | SHA-256 for source and exact representation bytes | Enables source verification and representation-level leakage prevention. |
 | Duplicates | Group exact equal representations before splitting | Identical model inputs must not cross scientific partitions. |
 | Tokenization later | 16-byte EXE words, then BPE/unigram | Matches the paper's basic vectorization idea. |
@@ -38,12 +40,13 @@ Linux `file` and Detect-It-Easy filtering process from the paper.
 
 ## What happens next
 
-Phase 2 creates a deterministic 1,000-sample local manifest, verifies every selected source hash,
-and reports exclusions by class and ransomware family. A family with no allocated slot is reported;
-a family whose target equals its eligible count is also reported. It must not start PE parsing yet.
+Phase 2 created a deterministic 1,000-sample local manifest, verified every selected source hash,
+and reported exclusions by class and ransomware family. A family with no allocated slot is reported;
+a family whose target equals its eligible count is also reported.
 
-Phase 3 compares a small parser adapter with the RawByteClf EXE rules using synthetic PE fixtures,
-then extracts EXE bytes with structured failures and representation SHA-256 digests.
+Phase 3 re-verifies every pilot source before static parsing, then extracts EXE bytes with structured
+failures and representation SHA-256 digests. It does not create a scientific split or deduplicate
+representations yet.
 
-The following remain intentionally open until evidence exists: LIEF versus pefile, scientific split
-proportions, padding/model choice, and all Ghidra toolchains. They are not hidden defaults.
+The following remain intentionally open until evidence exists: scientific split proportions,
+padding/model choice, and all Ghidra toolchains. They are not hidden defaults.

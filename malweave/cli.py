@@ -13,6 +13,13 @@ from dotenv import load_dotenv
 from malweave.config import CONFIGS_DIR, PROJECT_ROOT
 from malweave.data.dataset_config import DatasetConfigError, load_rands_dataset_config
 from malweave.data.rands import RandsDataError, inspect_rands, write_rands_manifest
+from malweave.data.rands_exe import (
+    RandsExeError,
+    exe_console_summary,
+    extract_rands_exe,
+    load_pilot_sources,
+    write_rands_exe_outputs,
+)
 from malweave.data.rands_pilot import (
     RandsPilotError,
     build_rands_pilot,
@@ -79,6 +86,37 @@ def _parser() -> argparse.ArgumentParser:
         required=True,
         help="Aggregate local JSON evidence; safe because it contains no sample hashes.",
     )
+
+    extract_exe = data_commands.add_parser(
+        "extract-exe", help="Statically extract executable PE-section bytes from a pilot manifest."
+    )
+    extract_exe.add_argument("--dataset", choices=("rands",), required=True)
+    extract_exe.add_argument("--config", type=Path, default=DEFAULT_RANDS_CONFIG)
+    extract_exe.add_argument("--root", type=Path, default=None)
+    extract_exe.add_argument(
+        "--pilot-manifest",
+        type=Path,
+        required=True,
+        help="Verified local pilot CSV created by data pilot; it contains sample hashes.",
+    )
+    extract_exe.add_argument(
+        "--representation-dir",
+        type=Path,
+        required=True,
+        help="Ignored local directory for EXE bytes; inside the repository use data/processed/.",
+    )
+    extract_exe.add_argument(
+        "--manifest",
+        type=Path,
+        required=True,
+        help="Ignored local EXE representation manifest containing sample hashes.",
+    )
+    extract_exe.add_argument(
+        "--summary",
+        type=Path,
+        required=True,
+        help="Aggregate local JSON extraction report containing no individual sample hashes.",
+    )
     return parser
 
 
@@ -112,7 +150,17 @@ def main(argv: Sequence[str] | None = None) -> int:
             write_rands_pilot_outputs(build, args.manifest, args.summary)
             print(json.dumps(pilot_console_summary(build.summary), indent=2, sort_keys=True))
             return 0 if build.passed else 1
-    except (DatasetConfigError, RandsDataError, RandsPilotError, OSError) as error:
+        if args.command == "data" and args.data_command == "extract-exe":
+            dataset_config = load_rands_dataset_config(args.config)
+            root = dataset_config.resolve_root(args.root)
+            sources = load_pilot_sources(args.pilot_manifest)
+            rows, summary = extract_rands_exe(
+                dataset_config, root, sources, args.representation_dir
+            )
+            summary = write_rands_exe_outputs(rows, summary, args.manifest, args.summary)
+            print(json.dumps(exe_console_summary(summary), indent=2, sort_keys=True))
+            return 0
+    except (DatasetConfigError, RandsDataError, RandsPilotError, RandsExeError, OSError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
 

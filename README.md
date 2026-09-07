@@ -8,9 +8,9 @@ corpus; it is not the paper's official implementation.
 
 ## Current State
 
-RanDS currently supports a read-only release audit and a deterministic, fully source-hash-verified
-local pilot-manifest build. Neither command parses or executes PE files. PE extraction,
-tokenization, model training, and Ghidra analysis are planned phases, not available commands.
+RanDS currently supports a read-only release audit, a deterministic source-hash-verified pilot
+manifest, and static EXE-section extraction from that pilot. No command executes PE files.
+Tokenization, model training, and Ghidra analysis are planned phases, not available commands.
 
 ```bash
 uv sync --locked

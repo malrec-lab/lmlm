@@ -35,8 +35,8 @@ Rules for maintainers and AI assistants:
 | 0. Repository and RanDS inventory foundation | `COMPLETED` | Read-only corpus contract, CLI, tests, docs, `.env`, and cross-platform CI |
 | 0.5. Repository hygiene | `COMPLETED` | Removed unsolicited dependency automation and isolated documentation concurrency |
 | 1. Reproduction protocol | `COMPLETED` | Concise paper, RawByteClf, and RanDS protocol for the bounded EXE pilot |
-| 2. Deterministic pilot manifest | `IN REVIEW` | Select and fully verify a bounded 1,000-sample cohort |
-| 3. PE validation and EXE extraction | `NOT STARTED` | Produce deterministic executable-section bytes with failure accounting |
+| 2. Deterministic pilot manifest | `COMPLETED` | Select and fully verify a bounded 1,000-sample cohort |
+| 3. PE validation and EXE extraction | `IN REVIEW` | Produce deterministic executable-section bytes with failure accounting |
 | 4. RAW versus EXE data products | `NOT STARTED` | Freeze representation rules and quantify truncation and redundancy |
 | 5. Pilot baselines and RawByteClf port | `NOT STARTED` | Validate training and evaluation without leakage |
 | 6. DIS representation | `NOT STARTED` | Add pinned, isolated headless disassembly after EXE is stable |
@@ -160,12 +160,12 @@ experimental cohort.
 
 ### Gate
 
-- [ ] Exactly 1,000 unique available samples satisfy the approved protocol.
-- [ ] All 1,000 source hashes match their canonical SHA-256 identifiers.
-- [ ] Every selected source identity is unique. This phase creates no scientific split; derived
+- [x] Exactly 1,000 unique available samples satisfy the approved protocol.
+- [x] All 1,000 source hashes match their canonical SHA-256 identifiers.
+- [x] Every selected source identity is unique. This phase creates no scientific split; derived
   representation-equivalence groups are deferred until representations exist.
-- [ ] Regeneration produces a byte-identical manifest on supported platforms.
-- [ ] Class and family distributions plus all exclusions are reported.
+- [x] Regeneration produces a byte-identical manifest on supported platforms.
+- [x] Class and family distributions plus all exclusions are reported.
 
 ## Phase 3: PE validation and EXE extraction
 
@@ -274,4 +274,5 @@ Current evidence:
 2026-09-03 | Phase 0 | c596b77 | rands-raw-2026.yaml | real-corpus contract + make check | RanDS methodology adaptation
 2026-09-04 | Phase 0.5 | 80af695 | repository workflows | main Quality + Documentation passed | dependency updates remain manual
 2026-09-05 | Phase 1 | be8d348 | lmlm-rands-pilot.yaml | make check | RanDS cohort and representation adaptation
+2026-09-05 | Phase 2 | a974280 | lmlm-rands-pilot.yaml | 1,000 source hashes + byte-identical regeneration + make check | proportional family pilot allocation
 ```

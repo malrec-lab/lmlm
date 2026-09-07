@@ -1,7 +1,7 @@
-# Phase 2 pilot-manifest contract. This is not an executable training configuration yet.
+# Phase 3 pilot EXE-extraction contract. This is not an executable training configuration yet.
 protocol:
   name: lmlm-rands-pilot
-  phase: 2
+  phase: 3
   state: in_review
 
 references:
@@ -47,8 +47,8 @@ representations:
     definition: Concatenate raw bytes from PE sections marked executable or containing code.
     selection_flags: [IMAGE_SCN_MEM_EXECUTE, IMAGE_SCN_CNT_CODE]
     order: PE section-table order
-    range_rule: Use raw offset and raw size; record invalid or empty sections as structured failures.
-    parser: deferred_to_phase_3
+    range_rule: Clip raw ranges at EOF or the next non-empty section; record every clip or empty range.
+    parser: LIEF 0.15.1, matching RawByteClf's default toolkit.
   raw: Full source PE bytes; comparison representation after the EXE pilot.
   dis: Ghidra headless instruction stream without function signatures; deferred to Phase 6.
   dec: Ghidra headless decompiler output; deferred to Phase 7.
@@ -73,3 +73,4 @@ later_training_contract:
 phase_boundary:
   phase_1: No PE parsing, manifest creation, tokenizer fitting, or training.
   phase_2: Create and fully source-hash-verify the deterministic 1,000-sample manifest.
+  phase_3: Re-verify pilot sources and extract EXE bytes; do not split, deduplicate, tokenize, train, or run Ghidra.
