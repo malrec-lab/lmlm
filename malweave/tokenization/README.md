@@ -15,7 +15,7 @@ sequences suitable for model training.
 and yields batches of strings. `TrainTokenizer` selects the model, normalizer,
 pre-tokenizer, and trainer for BPE, Unigram, WordPiece, or WordLevel.
 
-The default reproduction flow uses BPE with:
+The default tokenizer configuration uses BPE with:
 
 - a requested vocabulary of 16,384 tokens;
 - seven special tokens;
