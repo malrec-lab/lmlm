@@ -298,7 +298,8 @@ def _distribution(records: list[RandsRecord]) -> dict[str, Any]:
     }
 
 
-def _sha256(path: Path) -> tuple[str, int]:
+def hash_file_sha256(path: Path) -> tuple[str, int]:
+    """Return a file's SHA-256 and byte count without interpreting its contents."""
     digest = hashlib.sha256()
     bytes_read = 0
     with path.open("rb") as handle:
@@ -312,7 +313,7 @@ def _verify_content_hashes(paths: list[Path]) -> dict[str, int]:
     mismatches = 0
     bytes_read = 0
     for path in paths:
-        digest, sample_bytes = _sha256(path)
+        digest, sample_bytes = hash_file_sha256(path)
         bytes_read += sample_bytes
         if digest != path.name.lower():
             mismatches += 1

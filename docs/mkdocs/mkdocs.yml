@@ -5,9 +5,12 @@ theme:
   name: readthedocs
 nav:
   - Home: index.md
-  - Getting started: getting-started.md
+  - Getting started:
+      - Environment setup: getting-started.md
+      - Onboarding a research task: onboarding.md
   - Workflows:
       - LMLM on RanDS: workflows/lmlm-rands.md
+      - LMLM on RanDS protocol: workflows/lmlm-rands-protocol.md
       - LMLM on RanDS roadmap: workflows/lmlm-rands-roadmap.md
   - Development:
       - Environment and dependencies: development/environment.md

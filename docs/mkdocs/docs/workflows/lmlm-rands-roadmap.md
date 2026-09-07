@@ -14,7 +14,7 @@ Statuses have the following meanings:
 | Status | Meaning |
 | --- | --- |
 | `COMPLETED` | The phase gate passed and evidence is recorded. |
-| `IN REVIEW` | Implementation exists but is not yet merged and verified on `main`. |
+| `IN REVIEW` | Implementation exists but maintainer review and its final evidence record are incomplete. |
 | `NEXT` | The only phase approved to begin after the current review completes. |
 | `NOT STARTED` | Work must not begin until earlier gates pass. |
 | `BLOCKED` | Progress requires a recorded maintainer decision or external prerequisite. |
@@ -33,10 +33,10 @@ Rules for maintainers and AI assistants:
 | Phase | Status | Outcome |
 | --- | --- | --- |
 | 0. Repository and RanDS inventory foundation | `COMPLETED` | Read-only corpus contract, CLI, tests, docs, `.env`, and cross-platform CI |
-| 0.5. Repository hygiene | `IN REVIEW` | Remove unsolicited dependency automation and isolate documentation concurrency |
-| 1. Reproduction protocol | `NEXT` | Reconcile paper, RawByteClf, and RanDS decisions before preprocessing |
-| 2. Deterministic pilot manifest | `NOT STARTED` | Select and fully verify a bounded 1,000-sample cohort |
-| 3. PE validation and EXE extraction | `NOT STARTED` | Produce deterministic executable-section bytes with failure accounting |
+| 0.5. Repository hygiene | `COMPLETED` | Removed unsolicited dependency automation and isolated documentation concurrency |
+| 1. Reproduction protocol | `COMPLETED` | Concise paper, RawByteClf, and RanDS protocol for the bounded EXE pilot |
+| 2. Deterministic pilot manifest | `COMPLETED` | Select and fully verify a bounded 1,000-sample cohort |
+| 3. PE validation and EXE extraction | `IN REVIEW` | Produce deterministic executable-section bytes with failure accounting |
 | 4. RAW versus EXE data products | `NOT STARTED` | Freeze representation rules and quantify truncation and redundancy |
 | 5. Pilot baselines and RawByteClf port | `NOT STARTED` | Validate training and evaluation without leakage |
 | 6. DIS representation | `NOT STARTED` | Add pinned, isolated headless disassembly after EXE is stable |
@@ -74,9 +74,9 @@ Rules for maintainers and AI assistants:
 ### Gate
 
 - [x] Source changes implemented and locally validated.
-- [ ] Hygiene pull request merged into `main`.
-- [ ] Quality and Documentation workflows pass on the merged commit.
-- [ ] Unrequested dependency-update pull requests are closed.
+- [x] Hygiene pull request merged into `main`.
+- [x] Quality and Documentation workflows pass on the merged commit.
+- [x] Unrequested dependency-update pull requests are closed.
 
 Phase 1 must not modify preprocessing code until this gate is complete.
 
@@ -103,20 +103,20 @@ Conflicts among these sources must be documented rather than silently resolved.
 - A list of unresolved decisions; no placeholder may silently become a default.
 - Focused tests for any reusable protocol validation added in this phase.
 
-### Open decisions
+### Phase 1 conclusions
 
-- Whether the adapted cohort includes EXE only or both EXE and DLL.
-- The exact interpretation of `I386` and unpacked filtering.
-- The faithful split policy and the additional family- or time-aware evaluation policy.
-- Representation length, truncation direction, padding value, and empty-input behavior.
-- Primary metrics and the number of seeds required for reported experiments.
+- EXE and DLL are both included, following the paper's collection scope.
+- `Arch=I386` and `Packed=0` are explicit RanDS adaptations, not claims of tool-equivalent filtering.
+- Representation deduplication must happen before a scientific split; exact split policy and model
+  choices wait for the pilot evidence.
+- EXE starts before DIS and DEC; RAW remains a later comparison representation.
 
 ### Gate
 
-- [ ] Every open decision is resolved or explicitly deferred with a reason.
-- [ ] Every divergence from the paper is labelled and reviewable.
-- [ ] A second reader can derive the same cohort rules from config and documentation alone.
-- [ ] `make check` passes.
+- [x] Every open decision is resolved or explicitly deferred with a reason.
+- [x] Every divergence from the paper is labelled and reviewable.
+- [x] A second reader can derive the same cohort rules from config and documentation alone.
+- [x] `make check` passes.
 
 ## Phase 2: Deterministic 1,000-sample pilot
 
@@ -125,13 +125,29 @@ Conflicts among these sources must be documented rather than silently resolved.
 Create a bounded cohort that validates the complete data path without paying full-corpus cost.
 This pilot is engineering evidence, not the final evaluation dataset.
 
-### Proposed local outputs
+### Optional local provenance output from Phase 0
 
 ```text
 data/interim/rands/2026-09-02/inventory.csv
+```
+
+Generate this optional full-release diagnostic/provenance artifact with `data inspect --manifest`.
+It records metadata, availability, relative paths, and canonical source SHA-256 values; content-hash
+verification remains an explicit `data inspect --verify-hashes` choice. It is not a prerequisite or
+input to Phase 2.
+
+### Required Phase 2 outputs
+
+```text
 data/interim/rands/2026-09-02/pilot-1000.csv
 reports/rands/2026-09-02/pilot-1000.json
 ```
+
+The Phase 2 `data pilot` command reads the RanDS metadata CSV directly, audits the local
+filesystem, deterministically selects the 1,000-sample cohort, verifies source SHA-256 values, and
+writes the pilot manifest and summary. `inventory.csv` and `pilot-1000.csv` have different
+purposes: the inventory describes the available corpus; the pilot manifest records the selected
+experimental cohort.
 
 ### Deliverables
 
@@ -144,11 +160,12 @@ reports/rands/2026-09-02/pilot-1000.json
 
 ### Gate
 
-- [ ] Exactly 1,000 unique available samples satisfy the approved protocol.
-- [ ] All 1,000 source hashes match their canonical SHA-256 identifiers.
-- [ ] No source or equivalent group crosses a pilot split.
-- [ ] Regeneration produces a byte-identical manifest on supported platforms.
-- [ ] Class and family distributions plus all exclusions are reported.
+- [x] Exactly 1,000 unique available samples satisfy the approved protocol.
+- [x] All 1,000 source hashes match their canonical SHA-256 identifiers.
+- [x] Every selected source identity is unique. This phase creates no scientific split; derived
+  representation-equivalence groups are deferred until representations exist.
+- [x] Regeneration produces a byte-identical manifest on supported platforms.
+- [x] Class and family distributions plus all exclusions are reported.
 
 ## Phase 3: PE validation and EXE extraction
 
@@ -255,4 +272,7 @@ Current evidence:
 
 ```text
 2026-09-03 | Phase 0 | c596b77 | rands-raw-2026.yaml | real-corpus contract + make check | RanDS methodology adaptation
+2026-09-04 | Phase 0.5 | 80af695 | repository workflows | main Quality + Documentation passed | dependency updates remain manual
+2026-09-05 | Phase 1 | be8d348 | lmlm-rands-pilot.yaml | make check | RanDS cohort and representation adaptation
+2026-09-05 | Phase 2 | a974280 | lmlm-rands-pilot.yaml | 1,000 source hashes + byte-identical regeneration + make check | proportional family pilot allocation
 ```

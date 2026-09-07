@@ -2,94 +2,35 @@
 
 [![CCDS](https://img.shields.io/badge/CCDS-2.3.0-328F97?logo=cookiecutter)](https://cookiecutter-data-science.drivendata.org/)
 
-MalWeave is a research codebase for reproducing and extending malware language modeling approaches for malware detection and analysis. The repository is organized with [Cookiecutter Data Science](https://cookiecutter-data-science.drivendata.org/) so experiments can grow without mixing source code, data, model artifacts, and research evidence.
+MalWeave is an independent research codebase for reproducing and extending malware language
+modeling methods. It currently adapts Large Malware Language Models (LMLM) to the RanDS ransomware
+corpus; it is not the paper's official implementation.
 
-## Research Scope
+## Current State
 
-This project initially focuses on reproducing and extending Large Malware Language Models (LMLM).
-
-The implementation is intended as an independent research codebase, not as the official implementation of the original LMLM paper.
-
-## Start Here
-
-The repository currently provides the research foundation; it does not distribute a trained model or dataset. The canonical development environment uses **CPython 3.12.12** and **uv 0.11.9**. After installing that uv version, create the exact locked environment and run every check with:
+RanDS currently supports a read-only release audit, a deterministic source-hash-verified pilot
+manifest, and static EXE-section extraction from that pilot. No command executes PE files.
+Tokenization, model training, and Ghidra analysis are planned phases, not available commands.
 
 ```bash
 uv sync --locked
 make check
 ```
 
-The package supports Python 3.10 through 3.12. CI tests Python 3.10 on Ubuntu and the canonical
-Python 3.12.12 environment on Ubuntu, macOS, and Windows. `uv` reads `.python-version`, creates
-`.venv`, and installs the exact versions in `uv.lock`, so manual activation is optional. See the
-[environment and dependency guide](docs/mkdocs/docs/development/environment.md) before changing
-dependencies and [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes.
+## Documentation Map
 
-Individual checks remain available:
+| If you need to... | Read |
+| --- | --- |
+| Set up the environment and point the project at local data | [Getting Started](docs/mkdocs/docs/getting-started.md) |
+| Implement a research task | [Onboarding a Research Task](docs/mkdocs/docs/onboarding.md) |
+| Understand source and artifact boundaries | [Project Structure](docs/mkdocs/docs/project-structure.md) |
+| Use the RanDS corpus | [RanDS dataset card](docs/mkdocs/docs/datasets/rands.md) |
+| Run the implemented RanDS audit | [LMLM on RanDS workflow](docs/mkdocs/docs/workflows/lmlm-rands.md) |
+| Check which research phase is allowed | [LMLM on RanDS roadmap](docs/mkdocs/docs/workflows/lmlm-rands-roadmap.md) |
+| Change dependencies or contributor workflow | [Environment guide](docs/mkdocs/docs/development/environment.md) and [CONTRIBUTING.md](CONTRIBUTING.md) |
 
-```bash
-make test
-make lint
-make format-check
-make docs
-```
+## Safety
 
-Serve the research documentation locally with:
-
-```bash
-uv run --locked python -m mkdocs serve --config-file docs/mkdocs/mkdocs.yml
-```
-
-Audit the documented RanDS raw-PE snapshot without modifying it:
-
-```bash
-cp .env.example .env
-# Edit .env and set MALWEAVE_RANDS_DIR to the extracted corpus path.
-uv run --locked malweave data inspect --dataset rands
-```
-
-The [LMLM on RanDS workflow](docs/mkdocs/docs/workflows/lmlm-rands.md) explains the release
-contract, configuration precedence, optional integrity checks, and why preprocessing begins with
-a bounded EXE pilot. The CLI loads the ignored root `.env` without overriding variables already
-set by the calling shell or CI environment.
-
-Review the [LMLM on RanDS research roadmap](docs/mkdocs/docs/workflows/lmlm-rands-roadmap.md)
-before starting a later phase. It is the canonical record of phase status, decisions, deliverables,
-and completion gates for maintainers and AI assistants.
-
-## Project Map
-
-```text
-.
-├── configs/             Versioned dataset and experiment specifications
-├── data/                Local, Git-ignored raw/external/interim/processed data
-├── docs/mkdocs/docs/    Maintained project and dataset documentation
-├── malweave/            Importable Python package for the research pipeline
-├── models/              Local, Git-ignored checkpoints and predictions
-├── notebooks/           Ordered, exploratory notebooks
-├── references/          Papers, datasheets, and external reference material
-├── reports/             Local, Git-ignored generated reports and figures
-└── tests/               Automated checks for reusable research code
-```
-
-Read the full [project structure guide](docs/mkdocs/docs/project-structure.md) before starting a new pipeline. The [migration report](docs/mkdocs/docs/migration.md) records what changed and why. Dataset acquisition, licensing, evaluation, and safety notes are in the [dataset catalog](docs/mkdocs/docs/datasets/index.md).
-
-## Research Workflow
-
-1. Choose and document a dataset in `configs/datasets/`; follow its corresponding dataset card before downloading anything.
-2. Store immutable downloads in `data/raw/` or third-party inputs in `data/external/`. Keep these directories out of Git.
-3. Make deterministic transformations through `data/interim/` to `data/processed/`, with code in `malweave/data/` and configuration in `configs/`.
-4. Put reusable model components in `malweave/models/`, orchestration in `malweave/training/`, and metrics/split logic in `malweave/evaluation/`.
-5. Save checkpoints and predictions under `models/`, then create figures and generated reports under `reports/`. Record each run's configuration, seed, dataset release, and metrics together.
-
-## Data and Safety Policy
-
-No raw samples, credentials, proprietary data, extracted malware features, or model checkpoints belong in version control. Several documented datasets contain or describe malicious PE files. Obtain them only under their stated terms and handle them in an isolated, access-controlled analysis environment. The data directories are ignored deliberately; their [local data guide](data/README.md) explains the lifecycle.
-
-## Conventions
-
-- Name notebooks as `<order>-<initials>-<topic>.ipynb`, for example `01-nv-dataset-audit.ipynb`. Promote durable notebook logic into `malweave/`.
-- Give every experiment a committed configuration in `configs/experiments/` and keep an immutable copy beside its outputs.
-- Split data before fitting tokenizers, normalizers, feature selectors, or other learned transforms. Preserve dataset-specific temporal and family/provenance constraints recorded in the catalog.
-- Add dependencies through `uv add` in the narrowest appropriate group and commit `pyproject.toml` with the resulting `uv.lock` change.
-- Add tests for reusable loaders, transformations, splitters, and evaluation code; use `make check` before sharing changes.
+Raw PE files may be live malware. Never execute, commit, upload, redistribute, or interactively
+open them. Keep raw data and generated artifacts outside Git, and use synthetic fixtures in tests.
+Read `AGENTS.md` before changing research code.
