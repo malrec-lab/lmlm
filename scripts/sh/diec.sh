@@ -19,4 +19,6 @@ opts=("${@:1:$#-1}")
 dir=$(cd "$(dirname "$file")" && pwd)
 name=$(basename "$file")
 
-docker run --rm --platform linux/amd64 -v "$dir":/work horsicq:diec "${opts[@]}" "/work/$name"
+docker run --rm --platform linux/amd64 \
+  --mount "type=bind,src=$dir,dst=/work" \
+  horsicq:diec "${opts[@]}" "/work/$name"

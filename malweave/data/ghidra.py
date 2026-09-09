@@ -79,7 +79,7 @@ def lift_sample(
     with tempfile.TemporaryDirectory(prefix="malweave-ghidra-") as temporary_directory:
         lift_dir = Path(temporary_directory)
         try:
-            subprocess.run(
+            completed = subprocess.run(
                 [str(GHIDRA_LIFT_SCRIPT), str(input_path), str(lift_dir)],
                 check=True,
                 capture_output=True,
@@ -93,10 +93,24 @@ def lift_sample(
         generated_id = input_path.stem if input_path.suffix else input_path.name
         generated_dis = lift_dir / f"{generated_id}.asm"
         generated_dec = lift_dir / f"{generated_id}.c"
+        generated_log = lift_dir / "log.txt"
+        if generated_log.is_file():
+            log_path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(generated_log, log_path)
         if not generated_dis.is_file() or not generated_dec.is_file():
             generated = ", ".join(sorted(path.name for path in lift_dir.iterdir()))
+            log_tail = ""
+            if generated_log.is_file():
+                log_tail = generated_log.read_text(errors="replace")[-4000:].strip()
+            process_output = (completed.stderr or completed.stdout or "").strip()[-4000:]
+            diagnostics = []
+            if log_tail:
+                diagnostics.append(f"log tail:\n{log_tail}")
+            if process_output:
+                diagnostics.append(f"process output:\n{process_output}")
+            details = "; " + "\n".join(diagnostics) if diagnostics else ""
             raise RuntimeError(
-                f"Ghidra did not produce DIS and DEC for {sample_id}; generated: {generated}"
+                f"Ghidra did not produce DIS and DEC for {sample_id}; generated: {generated}{details}"
             )
 
         dis_path.parent.mkdir(parents=True, exist_ok=True)
@@ -107,12 +121,7 @@ def lift_sample(
         )
         shutil.copyfile(generated_dec, dec_path)
 
-        generated_log = lift_dir / "log.txt"
-        materialized_log = None
-        if generated_log.is_file():
-            log_path.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(generated_log, log_path)
-            materialized_log = log_path
+        materialized_log = log_path if generated_log.is_file() else None
 
     return GhidraLiftResult(
         dis_path=dis_path,
