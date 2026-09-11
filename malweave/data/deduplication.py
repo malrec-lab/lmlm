@@ -257,12 +257,15 @@ def load_rands_metadata(
             reader = csv.DictReader(stream)
             if not reader.fieldnames or "SHA256" not in reader.fieldnames:
                 raise ValueError(f"No SHA256 column in {path}: {reader.fieldnames}")
+            
             for row_number, row in enumerate(reader, start=2):
                 sample = row["SHA256"].strip().lower()
                 if not SHA256_PATTERN.fullmatch(sample):
                     raise ValueError(f"Invalid SHA-256 at {path.name}:{row_number}: {sample!r}")
+                
                 if sample in metadata:
                     raise ValueError(f"Repeated SHA-256 across RanDS metadata: {sample}")
+                
                 year_text = (row.get("Year") or "").strip()
                 metadata[sample] = SampleMetadata(
                     binary_label=binary_label,
